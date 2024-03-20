@@ -12,38 +12,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
+
 @RestController
 @AllArgsConstructor
 public class JwtAuthenticationController {
 
-    private UserDetailsService userDetailsService;
+	private UserDetailsService userDetailsService;
 
-    private AuthenticationManager manager;
+	private AuthenticationManager authenticationManager;
 
-    private JwtHelper helper;
+	private JwtHelper helper;
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
-    	
+	@PostMapping("/authenticate")
+	public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
+		
+		UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+		String token = this.helper.generateToken(userDetails);
+		JwtResponse response = JwtResponse.builder().jwtToken(token).username(userDetails.getUsername()).build();
+		org.springframework.security.core.Authentication authenticationResult = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-    	  this.doAuthenticate(request.getUsername(), request.getPassword());
+		if (authenticationResult.isAuthenticated()) {
 
+			return new ResponseEntity<>(response, HttpStatus.OK);
 
-          UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
-          String token = this.helper.generateToken(userDetails);
+		} else {
 
-          JwtResponse response = JwtResponse.builder()
-                  .jwtToken(token)
-                  .username(userDetails.getUsername()).build();
-          return new ResponseEntity<>(response, HttpStatus.OK);
-      }
-    private void doAuthenticate(String email, String password) {
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
-        try {
-            manager.authenticate(authentication);
-        } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("Credentials Invalid !!");
-        }
+			throw new BadCredentialsException("Credentials Invalid !!");
 
-    }
+		}
+
+	}
+
 }

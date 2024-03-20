@@ -52,7 +52,13 @@ public class StudentController {
 		Student student = studentService.getStudentById(id);
 		return new ResponseEntity<Student>(student, HttpStatus.OK);
 	}
-
+	
+	@PostMapping("/new")
+	public String addUser(@RequestBody UserInfo userInfo) {
+		return this.studentService.addUser(userInfo);
+	}
+	
+	/*
 	@PostMapping("/authenticate")
 	public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
 		this.doAuthenticate(request.getUsername(), request.getPassword());
@@ -62,6 +68,7 @@ public class StudentController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+	
 	private void doAuthenticate(String email, String password) {
 		UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email, password);
 		try {
@@ -71,10 +78,8 @@ public class StudentController {
 		}
 
 	}
+	*/
 	
-	@PostMapping("/new")
-	public String addUser(@RequestBody UserInfo userInfo) {
-		return this.studentService.addUser(userInfo);
-	}
+	
 	
 }

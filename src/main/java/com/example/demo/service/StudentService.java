@@ -26,7 +26,6 @@ public class StudentService {
 	@Autowired
 	PasswordEncoder encoder;
 	
-	
 	public Student saveStudent(Student student) {
 		
 	Student saveStudent=studentRepository.save(student);

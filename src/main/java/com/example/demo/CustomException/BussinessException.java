@@ -27,7 +27,7 @@ public class BussinessException extends RuntimeException {
 		this.exceptionCode = exceptionCode;
 		this.exceptionDescription = exceptionDescription;
 	}
-
+	
 	public BussinessException() {
 	}
 
